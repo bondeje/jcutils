@@ -4,19 +4,19 @@ CFLAGS_COM = -Wall -Wextra -Werror -pedantic -std=c99
 CFLAGS_DBG = $(CFLAGS_COM) -g2 -O0
 CFLAGS = $(CFLAGS_COM) -O2
 
-OBJS = page_buffer.o
-HDRS = page_buffer.h
+OBJS = strings.o
+HDRS = strings.h
 
-all: $(OBJS) all
+all: $(OBJS) test
 
 .MAIN: all
 
 .c.o:
-	$(CC) $(CLFAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 test: test.c
 	@if [ -n "$(SANITIZE)" ] ; then export DBGOPT="-fsanitize=address,undefined"; else export DBGOPT="" ; fi ; \
-	$(CC) $(CFLAGS_DBG) $$DBGOPT $< -o $@
+	$(CC) $(DBG_CFLAGS) $$DBGOPT $< -o $@
 
 check: all test
 	./test --verbose
