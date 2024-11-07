@@ -7,7 +7,7 @@ CFLAGS = $(CFLAGS_COM) -O2
 OBJS = page_buffer.o
 HDRS = page_buffer.h
 
-all: $(OBJS) all
+all: $(OBJS)
 
 .MAIN: all
 

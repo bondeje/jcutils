@@ -7,7 +7,7 @@ CFLAGS = $(CFLAGS_COM) -O2
 OBJS = strings.o
 HDRS = strings.h
 
-all: $(OBJS) test
+all: $(OBJS)
 
 .MAIN: all
 
