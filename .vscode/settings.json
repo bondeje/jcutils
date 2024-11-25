@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "*.hx": "c",
+        "*.h": "c",
+        "cmath": "c"
+    }
+}

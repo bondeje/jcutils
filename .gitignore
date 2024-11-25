@@ -1,3 +1,5 @@
+.vs_code/
+
 # Prerequisites
 *.d
 
@@ -50,3 +52,8 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+FFT/Algorithm.lyx
+FFT/fft.c
+FFT/fft.h
+FFT/test.c

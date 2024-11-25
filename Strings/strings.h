@@ -3,10 +3,6 @@
 
 // WARNING: except where otherwise noted, all pointers passed should be non-null
 
-#ifndef STRING_GROWTH_FACTOR
-	#define STRING_GROWTH_FACTOR 2
-#endif
-
 typedef struct String {
 	char * str;
 	ptrdiff_t size;

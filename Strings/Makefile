@@ -16,7 +16,7 @@ all: $(OBJS)
 
 test: test.c
 	@if [ -n "$(SANITIZE)" ] ; then export DBGOPT="-fsanitize=address,undefined"; else export DBGOPT="" ; fi ; \
-	$(CC) $(DBG_CFLAGS) $$DBGOPT $< -o $@
+	$(CC) $(CFLAGS_DBG) $$DBGOPT $< -o $@
 
 check: all test
 	./test --verbose

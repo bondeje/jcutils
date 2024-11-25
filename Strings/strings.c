@@ -7,6 +7,10 @@
 
 #include "strings.h"
 
+#ifndef STRING_GROWTH_FACTOR
+	#define STRING_GROWTH_FACTOR 2
+#endif
+
 String const WHITESPACE = {
 	.str = " \t\f\n\r\v",
 	.size = 6
