@@ -1,4 +1,7 @@
-.vs_code/
+.vscode/
+.vscoded/
+FFT/complex_tests/
+FFT/complex_test/
 
 # Prerequisites
 *.d
