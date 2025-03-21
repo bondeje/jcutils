@@ -107,21 +107,18 @@ void * MemPoolManager_next(MemPoolManager * self) {
 // internal only
 void * MemPoolManager_malloc_large(MemPoolManager * self, size_t size) {
     // creates a new special MemPool and inserts it before the MemPool at the top of the stack
-    MemPool * top = self->tail;
-    MemPool * next = MemPool_new(size, self->alignment_offset, top->prev);
+    MemPool * next = MemPool_new(size, self->alignment_offset, self->tail->prev);
     if (!next) {
         return NULL;
     }
-    self->tail = next;
-    void * out = MemPoolManager_malloc(self, size); // should consume the whole MemPool
-    top->prev = self->tail;
-    self->tail = top;
+    void * out = MemPool_malloc(next, size);
+    self->tail->prev = next;
     return out;
 }
 
 void * MemPoolManager_malloc(MemPoolManager * self, size_t size) {
     if (size > self->memory_size) {
-
+        return MemPoolManager_malloc_large(self, size);
     }
     void * out = MemPool_malloc(self->tail, size);
     if (!out) {
@@ -138,19 +135,19 @@ void * MemPoolManager_malloc(MemPoolManager * self, size_t size) {
 // internal only
 void * MemPoolManager_aligned_alloc_large(MemPoolManager * self, size_t size, size_t alignment) {
     // creates a new special MemPool and inserts it before the MemPool at the top of the stack
-    MemPool * top = self->tail;
-    MemPool * next = MemPool_new(size, alignment * ((sizeof(MemPool) - 1) / alignment + 1), top->prev);
+    MemPool * next = MemPool_new(size, alignment * ((sizeof(MemPool) - 1) / alignment + 1), self->tail->prev);
     if (!next) {
         return NULL;
     }
-    self->tail = next;
-    void * out = MemPoolManager_aligned_alloc(self, size, alignment); // should consume the whole MemPool
-    top->prev = self->tail;
-    self->tail = top;
+    void * out = MemPool_aligned_alloc(next, size, alignment); // should consume the whole MemPool
+    self->tail->prev = next;
     return out;
 }
 
 void * MemPoolManager_aligned_alloc(MemPoolManager * self, size_t size, size_t alignment) {
+    if (size > self->memory_size) {
+        return MemPoolManager_aligned_alloc_large(self, size, alignment);
+    }
     void * out = MemPool_aligned_alloc(self->tail, size, alignment);
     if (!out) {
         // try to add a new MemPool

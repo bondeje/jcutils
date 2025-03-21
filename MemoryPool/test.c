@@ -189,6 +189,21 @@ int test_mempoolmgr_aligned_alloc(void) {
     return nerrors;
 }
 
+int test_mempoolmgr_malloc_large(void) {
+    TEST_START(verbose);
+    int nerrors = 0;
+
+    int size_mempool = 4;
+    MemPoolManager * mgr = MemPoolManager_new(size_mempool, sizeof(double), _Alignof(double));
+    double * test = MemPoolManager_malloc(mgr, (size_mempool + 1) * sizeof(double));
+    nerrors += CHECK(test, "failed to allocate memory for %d doubles a mempool of size %d\n", size_mempool, size_mempool + 1);
+
+    MemPoolManager_del(mgr);
+
+    TEST_END(verbose, nerrors);
+    return nerrors;
+}
+
 int main(int narg, char ** args) {
     for (int i = 1; i < narg; i++) {
         if (!strcmp(args[i], "--showtypes")) {
@@ -229,6 +244,7 @@ int main(int narg, char ** args) {
     nerrors += test_mempoolmgr_next();
     nerrors += test_mempoolmgr_malloc();
     nerrors += test_mempoolmgr_aligned_alloc();
+    nerrors += test_mempoolmgr_malloc_large();
 
     return nerrors;
 }

@@ -1,7 +1,8 @@
 .vscode/
-.vscoded/
 FFT/complex_tests/
-FFT/complex_test/
+*.lyx#
+*.lyx~
+OSB/
 
 # Prerequisites
 *.d
