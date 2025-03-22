@@ -3,21 +3,25 @@ CC = gcc
 
 FLAGS = CC=$(CC) SANITIZE=$(SANITIZE) PREFIX=$(PREFIX)
 
-all: page_buffer strings_ memory_pool
+all: page_buffer_ strings_ memory_pool_ fft_
 
 .MAIN: all
 
-page_buffer:
-	(cd PageBuffer ; make clean check copy $(FLAGS))
+fft_:
+	(cd fft ; make clean check copy $(FLAGS))
+
+page_buffer_:
+	(cd page_buffer ; make clean check copy $(FLAGS))
 
 strings_:
-	(cd Strings ; make clean check copy $(FLAGS))
+	(cd strings ; make clean check copy $(FLAGS))
 
-memory_pool:
-	(cd MemoryPool ; make clean check copy speed $(FLAGS))
+memory_pool_:
+	(cd memory_pool ; make clean check copy speed $(FLAGS))
 
 clean:
 	rm -f *.o *.h *.so
-	(cd PageBuffer ; make clean)
-	(cd Strings ; make clean)
-	(cd MemoryPool ; make clean)
+	(cd page_buffer ; make clean)
+	(cd strings ; make clean)
+	(cd memory_pool ; make clean)
+	(cd fft ; make clean)
