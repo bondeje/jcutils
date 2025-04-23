@@ -3,6 +3,9 @@ FFT/complex_tests/
 *.lyx#
 *.lyx~
 OSB/
+stack.h
+slab_allocator.h
+main
 
 # Prerequisites
 *.d

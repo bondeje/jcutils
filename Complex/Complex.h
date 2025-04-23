@@ -1,12 +1,8 @@
 #ifndef COMPLEX_H_
 #define COMPLEX_H_
 
+#include "utils/macros.h"
 #include <complex.h>
-
-#ifndef CAT
-#define CAT_(a, b) a##b
-#define CAT(a, b) CAT_(a, b)
-#endif
 
 #define dcomplex_select(_2, _1, NAME, ...) NAME
 #define dcomplex(...) dcomplex_select(__VA_ARGS__, dcomplex_2, dcomplex_1, UNUSED)(__VA_ARGS__)

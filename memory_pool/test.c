@@ -3,7 +3,8 @@
 #include <assert.h>
 #include <stdint.h>
 #include "mempool.c"
-#include "../test/utils.h"
+#include "test/utils.h"
+#include "utils/macros.h"
 
 #define PRINT_SIZE_ALIGN(type) printf(STRINGIFY(type) " - size: %zu, align: %zu\n", sizeof(type), _Alignof(type))
 
@@ -14,9 +15,6 @@
 #else
 #define MAX_TEST_ALIGN 16
 #endif
-
-#define STRINGIFY_(x) #x
-#define STRINGIFY(x) STRINGIFY_(x)
 
 _Bool verbose = 0;
 
