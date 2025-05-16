@@ -8,7 +8,8 @@
 #define DELIM(x, delim, y) DELIM_(x, delim, y)
 #endif
 
-#define MANGLE2 DELIM
+#define MANGLE2_(x, y) x##_##y
+#define MANGLE2(x, y) MANGLE2_(x, y)
 #define MANGLE3_(x, y, z) x##_##y##_##z
 #define MANGLE3(x, y, z) MANGLE3_(x, y, z)
 

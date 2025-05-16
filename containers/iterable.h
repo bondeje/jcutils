@@ -11,22 +11,27 @@ typedef enum IteratorStatus {
 } IteratorStatus;
 
 #define Iterable(iterator_type) \
-struct MANGLE2(Iterable, iterator_type)
-
-#define DECLARE_Iterable(iterator_type) \
-typedef IteratorStatus CAT(Iterable(iterator_type), Iter_f)(INTERFACE_PARAM(Iterable(iterator_type)), iterator_type *); \
-DECLARE_INTERFACE_START(Iterable(iterator_type)) \
-    CAT(Iterable(iterator_type), Iter_f) * iter; \
-DECLARE_INTERFACE_END
+MANGLE2(Iterable, iterator_type)
 
 // iterators are also iterable
-#define Iterator(type)
-struct DELIM(Iterator, _, type);
+#define Iterator(type) \
+DELIM(Iterator, _, type)
+
+#define DECLARE_Iterable(type) \
+struct Iterable(type); \
+struct VTABLE_TYPE(Iterable(type)); \
+typedef void CAT(Iterable(type), _Iter_f)(INTERFACE_PARAM(Iterable(type)), struct Iterable(type) *); \
+DECLARE_INTERFACE_START(Iterable(type)) \
+    CAT(Iterable(type), _Iter_f) * iter; \
+DECLARE_INTERFACE_END
 
 #define DECLARE_Iterator(type) \
-typedef IteratorStatus CAT(Iterator(type), Next_f)(INTERFACE_PARAM(Iterator(type)), type *); \
+struct Iterator(type); \
+struct VTABLE_TYPE(Iterator(type)); \
+typedef type * CAT(Iterator(type), _Next_f)(INTERFACE_PARAM(Iterator(type))); \
 DECLARE_INTERFACE_START(Iterator(type)) \
-    CAT(Iterator(type), Next_f) * next; \
+    CAT(Iterator(type), _Next_f) * next; \
+    struct Iterable(type) * iterable; \
 DECLARE_INTERFACE_END
 
 #endif // ITERATION_H

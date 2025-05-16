@@ -3,7 +3,7 @@ FFT/complex_tests/
 *.lyx#
 *.lyx~
 OSB/
-stack.h
+stack_orig.h
 slab_allocator.h
 main
 
