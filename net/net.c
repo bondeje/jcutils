@@ -142,6 +142,7 @@ int mac_from_if(uint8_t mac[6], char const * if_name) {
 
 	if (SYSCTL_ERROR == sysctl(mib, COUNTOF(mib), buf, &len, NULL, 0)) {
 		perror("sysctl get if_list struct error");
+		free(buf);
 		return 6;
 	}
 
@@ -150,6 +151,7 @@ int mac_from_if(uint8_t mac[6], char const * if_name) {
 
 	// LLADDR method
 	memcpy(mac, LLADDR(s_dl), 6);
+	free(buf);
 	return 0;
 #endif
 }
