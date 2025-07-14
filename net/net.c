@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 #ifndef __linux__
 #include <sys/sysctl.h>
 // sockaddr_dl and link_ntoa (not really used)
