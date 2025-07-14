@@ -151,25 +151,6 @@ int mac_from_if(uint8_t mac[6], char const * if_name) {
 	// LLADDR method
 	memcpy(mac, LLADDR(s_dl), 6);
 	return 0;
-
-/*	//printf("sa_family AF_LINK = %lu\n", (unsigned long)AF_LINK);
-	//printf("sa_family in sockaddr: %lu\n", (unsigned long)s_dl->sdl_family);
-	char const * mac_hex = link_ntoa(s_dl);
-	size_t if_name_len = strlen(if_name);
-	if (!strncmp(mac_hex, if_name, if_name_len)) {
-		// the interfaces match
-		return mac_from_hex(mac, mac_hex + if_name_len + 1, strlen(mac_hex) - if_name_len - 1, '.');
-	} else {
-		// find colon
-		char const * mac_end = mac_hex + strlen(mac_hex);
-		while (*mac_hex && *mac_hex != ':') {
-			mac_hex++;
-		}
-		if (*mac_hex) {
-			return mac_from_hex(mac, mac_hex + 1, mac_end - mac_hex - 1, '.');
-		}
-	}
-	return 7;*/
 #endif
 }
 
@@ -223,7 +204,7 @@ int ifaddrs_name(char * buf, size_t buf_len, struct ifaddrs * ifa) {
 
 // returns 0 on success, else -1
 int ifaddrs_ipv4_netmask(struct sockaddr_in * dest, struct ifaddrs * ifa) {
-	if (!ifa->ifa_netmask || AF_INET != ifa->ifa_netmask->sa_family) {
+	if (!ifa->ifa_netmask) {
 		return -1;
 	}
 	*dest = *(struct sockaddr_in *)(ifa->ifa_netmask);
@@ -239,7 +220,7 @@ int ifaddrs_ipv4_broadaddr(struct sockaddr_in * dest, struct ifaddrs * ifa) {
 		return -1;
 	}
 #endif
-	if (!ifa->ifa_broadaddr || AF_INET != ifa->ifa_broadaddr->sa_family) {
+	if (!ifa->ifa_broadaddr) {
 		return -1;
 	}
 	*dest = *(struct sockaddr_in *)(ifa->ifa_broadaddr);
@@ -331,16 +312,16 @@ int ipv4_interface_from_ip(struct ipv4_interface * iface, char * ip) {
 	}
 	iface->if_name_len = (uint8_t)len;
 
-	if (!ifaddrs_ipv4_addr(&(iface->addr), ifa)) {
-		iface->flags |= IPV4_HAS_ADDR;
-	}
-
-	if (!ifaddrs_ipv4_netmask(&(iface->netmask), ifa)) {
-		iface->flags |= IPV4_HAS_NETMASK;
-	}
-
-	if (!ifaddrs_ipv4_broadaddr(&(iface->broadcast), ifa)) {
-		iface->flags |= IPV4_HAS_BROADCAST;
+	if (AF_INET == ifa->ifa_addr->sa_family) {
+		if (!ifaddrs_ipv4_addr(&(iface->addr), ifa)) {
+			iface->flags |= IPV4_HAS_ADDR;
+		}
+		if (!ifaddrs_ipv4_netmask(&(iface->netmask), ifa)) {
+			iface->flags |= IPV4_HAS_NETMASK;
+		}
+		if (!ifaddrs_ipv4_broadaddr(&(iface->broadcast), ifa)) {
+			iface->flags |= IPV4_HAS_BROADCAST;
+		}
 	}
 
 	if((result = mac_from_if(iface->mac, iface->if_name))) {
