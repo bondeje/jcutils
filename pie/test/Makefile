@@ -1,0 +1,5 @@
+all:
+
+check: all
+
+clean:
