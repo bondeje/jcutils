@@ -13,7 +13,6 @@ int getopt_long(int argc, char * const * argv,
 	const char * optstring,
 	const struct option * longopts, int * longindex) {
 
-	int getopt_result = getopt(argc, argv, optstring);
 	return 0;
 }
 
@@ -64,24 +63,19 @@ int getopt(int argc, char * const * argv,
 			if (*(optchar + 1) == ':') { // option requires an argument
 				in_chain = false; // regardless, this is the end of the option chain
 				optind++;
-				switch (*nextchar) {
-					case '\0': // last character in the string
-						if (optind >= argc) { // missing option-argument
-							optopt = result;
-							if (':' == *optstring) {
-								result = ':';
-							}
-							result = '?';
-							errmsg = "missing option-argument; end of argv";
-							goto getopt_error_handling;
+				if ('\0' == *nextchar) {
+					if (optind >= argc) { // missing option-argument
+						optopt = result;
+						if (':' == *optstring) {
+							result = ':';
 						}
-						optarg = argv[optind++];
-						break;
-					case '=':
-						optarg = nextchar + 1;
-						break;
-					default:
-						optarg = nextchar;
+						result = '?';
+						errmsg = "missing option-argument; end of argv";
+						goto getopt_error_handling;
+					}
+					optarg = argv[optind++];
+				} else {
+					optarg = nextchar;
 				}
 				nextchar = argv[optind];
 			} else { // option does not require an argument
@@ -94,6 +88,7 @@ int getopt(int argc, char * const * argv,
 		}
 		optchar++;
 	}
+	errmsg = "no matching option found";
 getopt_error_handling:
 	if (opterr && ':' != *optstring) {
 		if (invalid_char) {
