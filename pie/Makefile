@@ -3,7 +3,7 @@ CFLAGS_ = -Wall -Wextra $(CFLAGS)
 LFLAGS_ = $(LFLAGS)
 PREFIX=.
 
-OBJS=punistd.o
+OBJS=punistd.o pgetopt.o
 
 all: libpie.so
 	make -C test all
@@ -24,5 +24,6 @@ check: all
 	make -C test check
 
 clean:
+	rm -rf *.so
 	rm -rf $(OBJS)
 	make -C test clean

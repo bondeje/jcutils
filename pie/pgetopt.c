@@ -1,19 +1,15 @@
-#include "punistd.h"
+#include "getopt.h"
 
 #ifdef _WIN32
 
 #include <stdbool.h>
 #include <string.h>
 
-char * optarg = NULL;
-int opterr = 0;
-int optind = 1;
-int optopt = 0;
-
-int getopt(int argc, char * const * argv,
-	const char * optstring) {
-	static char * nextchar = NULL;
+int getopt_long(int argc, char * const * argv,
+	const char * optstring,
+	const struct option * longopts, int * longindex) {
 	static bool in_chain = false;
+	static char * nextchar = NULL;
 	static char const * errmsg = "";
 	static char invalid_char = '\0';
 	if (1 == optind) { // a reset is detected
@@ -40,10 +36,27 @@ int getopt(int argc, char * const * argv,
 		}
 		invalid_char = *nextchar;
 
-		if ('-' == *nextchar) { // "--" option termination
-			optind++;
-			errmsg = "\"--\" string detected. end of options";
-			goto getopt_error_handling;
+		if ('-' == *(nextchar++)) { 
+			if (!*nextchar) { // "--" option termination or longopts
+				optind++;
+				errmsg = "\"--\" string detected. end of options";
+				goto getopt_error_handling;
+			} else if (!longopts) {
+				errmsg = "long option found but no longopts provided";
+				goto getopt_error_handling;
+			} else { // handling longopts
+				int index = 0;
+				while (longopts[index]->name) {
+					size_t namelen = strlen(longopts[index]->name);
+					if (!strncmp(nextchar, longopts[index]->name, namelen)) { // longopt matches
+						switch (*(nextchar + namelen)) {
+							case '\0': // matches without "=option-argument"
+							case '=': // --longopt=option-argument
+							default: // not actually a match
+						}
+					}
+				}
+			}
 		}
 		in_chain = true;
 	}

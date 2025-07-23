@@ -1,11 +1,9 @@
 #ifndef PGETOPT_H
 #define PGETOPT_H
 
-#ifdef _GNU_SOURCE
+#include "punistd.h"
 
-#include <getopt.h>
-
-#else
+#ifdef _WIN32
 
 struct option {
 	const char * name;
@@ -13,6 +11,13 @@ struct option {
 	int * flag;
 	int val;
 };
+
+int getopt_long(int narg, char * const * args, const char * optstring,
+	const struct option * longopts, int * longindex);
+
+#else
+
+#include <getopt.h>
 
 #endif
 
