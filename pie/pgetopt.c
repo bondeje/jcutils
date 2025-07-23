@@ -4,6 +4,7 @@
 
 #include <stdbool.h>
 #include <string.h>
+#include <stdio.h>
 
 int getopt_long(int argc, char * const * argv,
 	const char * optstring,
@@ -46,9 +47,9 @@ int getopt_long(int argc, char * const * argv,
 				goto getopt_error_handling;
 			} else { // handling longopts
 				int index = 0;
-				while (longopts[index]->name) {
-					size_t namelen = strlen(longopts[index]->name);
-					if (!strncmp(nextchar, longopts[index]->name, namelen)) { // longopt matches
+				while (longopts[index].name) {
+					size_t namelen = strlen(longopts[index].name);
+					if (!strncmp(nextchar, longopts[index].name, namelen)) { // longopt matches
 						switch (*(nextchar + namelen)) {
 							case '\0': // matches without "=option-argument"
 							case '=': // --longopt=option-argument

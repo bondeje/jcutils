@@ -4,6 +4,7 @@
 
 #include <stdbool.h>
 #include <string.h>
+#include <stdio.h>
 
 char * optarg = NULL;
 int opterr = 0;
