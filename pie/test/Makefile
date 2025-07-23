@@ -12,7 +12,7 @@ test$(EXE): $(SRCS)
 	$(CC) $(IFLAGS_) $(CFLAGS_) -o test$(EXE) $(LFLAGS_) test.c
 
 check: all
-	./test$(EXE) --verbose
+	POSIXLY_CORRECT=1 ./test$(EXE) --verbose
 
 clean:
 	rm -f test$(EXE)

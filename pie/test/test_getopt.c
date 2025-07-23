@@ -1,4 +1,5 @@
 #include "../punistd.h"
+#include "../pgetopt.h"
 #include "../../test/utils.h"
 
 int test_getopt(void) {
@@ -206,6 +207,9 @@ int test_getopt_long(void) {
 	int nerrors = 0;
 	int narg = 0;
 	char const * optstring = "ab:c";
+	struct option null_opts = {
+		0
+	};
 
 	optind = 1;
 	opterr = 1;
@@ -227,24 +231,24 @@ int test_getopt_long(void) {
 	int result = -1;
 	narg = COUNTOF(args);
 
-	result = getopt_long(narg, args, optstring, NULL, NULL);
+	result = getopt_long(narg, args, optstring, &null_opts, NULL);
 	nerrors += CHECK('a' == result, "error - found %c, expected %c\n", result, 'a');
-	result = getopt_long(narg, args, optstring, NULL, NULL);
+	result = getopt_long(narg, args, optstring, &null_opts, NULL);
 	nerrors += CHECK('b' == result, "error - found %c, expected %c\n", result, 'b');
 	nerrors += CHECK(!strcmp(optarg, "c"), "error - found optarg %s, expected %s\n", optarg, "c");
-	result = getopt_long(narg, args, optstring, NULL, NULL);
+	result = getopt_long(narg, args, optstring, &null_opts, NULL);
 	nerrors += CHECK('b' == result, "error - found %c, expected %c\n", result, 'b');
 	nerrors += CHECK(!strcmp(optarg, "e"), "error - found optarg %s, expected %s\n", optarg, "e");
-	result = getopt_long(narg, args, optstring, NULL, NULL);
+	result = getopt_long(narg, args, optstring, &null_opts, NULL);
 	nerrors += CHECK('a' == result, "error - found %c, expected %c\n", result, 'a');
-	result = getopt_long(narg, args, optstring, NULL, NULL);
+	result = getopt_long(narg, args, optstring, &null_opts, NULL);
 	nerrors += CHECK('b' == result, "error - found %c, expected %c\n", result, 'b');
 	nerrors += CHECK(!strcmp(optarg, "f"), "error - found optarg %s, expected %s\n", optarg, "f");
-	result = getopt_long(narg, args, optstring, NULL, NULL);
+	result = getopt_long(narg, args, optstring, &null_opts, NULL);
 	nerrors += CHECK('a' == result, "error - found %c, expected %c\n", result, 'a');
-	result = getopt_long(narg, args, optstring, NULL, NULL);
+	result = getopt_long(narg, args, optstring, &null_opts, NULL);
 	nerrors += CHECK('c' == result, "error - found %c, expected %c\n", result, 'c');
-	result = getopt_long(narg, args, optstring, NULL, NULL);
+	result = getopt_long(narg, args, optstring, &null_opts, NULL);
 	nerrors += CHECK(-1 == result, "error - expected error, found %d\n", result);
 	nerrors += CHECK(!strcmp("test", args[optind]), "error - expected optind to be at \"test\", but is at %s\n", args[optind]);
 
@@ -253,24 +257,24 @@ int test_getopt_long(void) {
 	// reset 
 	optind = 1;
 
-	result = getopt_long(narg, args, optstring, NULL, NULL);
+	result = getopt_long(narg, args, optstring, &null_opts, NULL);
 	nerrors += CHECK('a' == result, "error - found %c, expected %c\n", result, 'a');
-	result = getopt_long(narg, args, optstring, NULL, NULL);
+	result = getopt_long(narg, args, optstring, &null_opts, NULL);
 	nerrors += CHECK('b' == result, "error - found %c, expected %c\n", result, 'b');
 	nerrors += CHECK(!strcmp(optarg, "c"), "error - found optarg %s, expected %s\n", optarg, "c");
-	result = getopt_long(narg, args, optstring, NULL, NULL);
+	result = getopt_long(narg, args, optstring, &null_opts, NULL);
 	nerrors += CHECK('b' == result, "error - found %c, expected %c\n", result, 'b');
 	nerrors += CHECK(!strcmp(optarg, "e"), "error - found optarg %s, expected %s\n", optarg, "e");
-	result = getopt_long(narg, args, optstring, NULL, NULL);
+	result = getopt_long(narg, args, optstring, &null_opts, NULL);
 	nerrors += CHECK('a' == result, "error - found %c, expected %c\n", result, 'a');
-	result = getopt_long(narg, args, optstring, NULL, NULL);
+	result = getopt_long(narg, args, optstring, &null_opts, NULL);
 	nerrors += CHECK('b' == result, "error - found %c, expected %c\n", result, 'b');
 	nerrors += CHECK(!strcmp(optarg, "f"), "error - found optarg %s, expected %s\n", optarg, "f");
-	result = getopt_long(narg, args, optstring, NULL, NULL);
+	result = getopt_long(narg, args, optstring, &null_opts, NULL);
 	nerrors += CHECK('a' == result, "error - found %c, expected %c\n", result, 'a');
-	result = getopt_long(narg, args, optstring, NULL, NULL);
+	result = getopt_long(narg, args, optstring, &null_opts, NULL);
 	nerrors += CHECK('c' == result, "error - found %c, expected %c\n", result, 'c');
-	result = getopt_long(narg, args, optstring, NULL, NULL);
+	result = getopt_long(narg, args, optstring, &null_opts, NULL);
 	nerrors += CHECK(-1 == result, "error - expected error, found %d\n", result);
 	nerrors += CHECK(!strcmp(args[8], args[optind]), "error - expected optind to point to %s but instead is at %s\n", args[8], args[optind]);
 
@@ -279,24 +283,24 @@ int test_getopt_long(void) {
 	// reset 
 	optind = 1;
 
-	result = getopt_long(narg, args, optstring, NULL, NULL);
+	result = getopt_long(narg, args, optstring, &null_opts, NULL);
 	nerrors += CHECK('a' == result, "error - found %c, expected %c\n", result, 'a');
-	result = getopt_long(narg, args, optstring, NULL, NULL);
+	result = getopt_long(narg, args, optstring, &null_opts, NULL);
 	nerrors += CHECK('b' == result, "error - found %c, expected %c\n", result, 'b');
 	nerrors += CHECK(!strcmp(optarg, "c"), "error - found optarg %s, expected %s\n", optarg, "c");
-	result = getopt_long(narg, args, optstring, NULL, NULL);
+	result = getopt_long(narg, args, optstring, &null_opts, NULL);
 	nerrors += CHECK('b' == result, "error - found %c, expected %c\n", result, 'b');
 	nerrors += CHECK(!strcmp(optarg, "e"), "error - found optarg %s, expected %s\n", optarg, "e");
-	result = getopt_long(narg, args, optstring, NULL, NULL);
+	result = getopt_long(narg, args, optstring, &null_opts, NULL);
 	nerrors += CHECK('a' == result, "error - found %c, expected %c\n", result, 'a');
-	result = getopt_long(narg, args, optstring, NULL, NULL);
+	result = getopt_long(narg, args, optstring, &null_opts, NULL);
 	nerrors += CHECK('b' == result, "error - found %c, expected %c\n", result, 'b');
 	nerrors += CHECK(!strcmp(optarg, "f"), "error - found optarg %s, expected %s\n", optarg, "f");
-	result = getopt_long(narg, args, optstring, NULL, NULL);
+	result = getopt_long(narg, args, optstring, &null_opts, NULL);
 	nerrors += CHECK('a' == result, "error - found %c, expected %c\n", result, 'a');
-	result = getopt_long(narg, args, optstring, NULL, NULL);
+	result = getopt_long(narg, args, optstring, &null_opts, NULL);
 	nerrors += CHECK('c' == result, "error - found %c, expected %c\n", result, 'c');
-	result = getopt_long(narg, args, optstring, NULL, NULL);
+	result = getopt_long(narg, args, optstring, &null_opts, NULL);
 	nerrors += CHECK('?' == result, "error - expected error, found %d\n", result);
 	// in this case, the status of optind is unspecified. An error has occurred
 	// nerrors += CHECK(!strcmp(args[8], args[optind]), "error - expected optind to point to %s but instead is at %s\n", args[8], args[optind]);
@@ -312,12 +316,12 @@ int test_getopt_long(void) {
 	// reset
 	optind = 1;
 
-	result = getopt_long(narg, args, optstring, NULL, NULL);
+	result = getopt_long(narg, args, optstring, &null_opts, NULL);
 	nerrors += CHECK('a' == result, "error - found %c, expected %c\n", result, 'a');
-	result = getopt_long(narg, args, optstring, NULL, NULL);
+	result = getopt_long(narg, args, optstring, &null_opts, NULL);
 	nerrors += CHECK('o' == result, "error - found %c, expected %c\n", result, 'o');
 	nerrors += CHECK(!strcmp(optarg, "arg"), "error - found optarg %s, expected %s\n", optarg, "arg");
-	result = getopt_long(narg, args, optstring, NULL, NULL);
+	result = getopt_long(narg, args, optstring, &null_opts, NULL);
 	nerrors += CHECK(-1 == result, "error - expected error, found %d\n", result);
 	nerrors += CHECK(3 == optind, "error - expected optind to point to %s but instead is at %s\n", args[3], args[optind]);
 
@@ -327,12 +331,12 @@ int test_getopt_long(void) {
 	// reset
 	optind = 1;
 
-	result = getopt_long(narg, args, optstring, NULL, NULL);
+	result = getopt_long(narg, args, optstring, &null_opts, NULL);
 	nerrors += CHECK('a' == result, "error - found %c, expected %c\n", result, 'a');
-	result = getopt_long(narg, args, optstring, NULL, NULL);
+	result = getopt_long(narg, args, optstring, &null_opts, NULL);
 	nerrors += CHECK('o' == result, "error - found %c, expected %c\n", result, 'o');
 	nerrors += CHECK(!strcmp(optarg, "arg"), "error - found optarg %s, expected %s\n", optarg, "arg");
-	result = getopt_long(narg, args, optstring, NULL, NULL);
+	result = getopt_long(narg, args, optstring, &null_opts, NULL);
 	nerrors += CHECK(-1 == result, "error - expected error, found %d\n", result);
 	nerrors += CHECK(4 == optind, "error - expected optind to point to %s but instead is at %s\n", args[4], args[optind]);
 
@@ -342,12 +346,12 @@ int test_getopt_long(void) {
 	// reset
 	optind = 1;
 
-	result = getopt_long(narg, args, optstring, NULL, NULL);
+	result = getopt_long(narg, args, optstring, &null_opts, NULL);
 	nerrors += CHECK('o' == result, "error - found %c, expected %c\n", result, 'o');
 	nerrors += CHECK(!strcmp(optarg, "arg"), "error - found optarg %s, expected %s\n", optarg, "arg");
-	result = getopt_long(narg, args, optstring, NULL, NULL);
+	result = getopt_long(narg, args, optstring, &null_opts, NULL);
 	nerrors += CHECK('a' == result, "error - found %c, expected %c\n", result, 'a');
-	result = getopt_long(narg, args, optstring, NULL, NULL);
+	result = getopt_long(narg, args, optstring, &null_opts, NULL);
 	nerrors += CHECK(-1 == result, "error - expected error, found %d\n", result);
 	nerrors += CHECK(4 == optind, "error - expected optind to point to %s but instead is at %s\n", args[4], args[optind]);
 
@@ -358,12 +362,12 @@ int test_getopt_long(void) {
 	// reset
 	optind = 1;
 
-	result = getopt_long(narg, args, optstring, NULL, NULL);
+	result = getopt_long(narg, args, optstring, &null_opts, NULL);
 	nerrors += CHECK('a' == result, "error - found %c, expected %c\n", result, 'a');
-	result = getopt_long(narg, args, optstring, NULL, NULL);
+	result = getopt_long(narg, args, optstring, &null_opts, NULL);
 	nerrors += CHECK('o' == result, "error - found %c, expected %c\n", result, 'o');
 	nerrors += CHECK(!strcmp(optarg, "arg"), "error - found optarg %s, expected %s\n", optarg, "arg");
-	result = getopt_long(narg, args, optstring, NULL, NULL);
+	result = getopt_long(narg, args, optstring, &null_opts, NULL);
 	nerrors += CHECK(-1 == result, "error - expected error, found %d\n", result);
 	nerrors += CHECK(5 == optind, "error - expected optind to point to %s but instead is at %s\n", args[5], args[optind]);
 
@@ -374,12 +378,12 @@ int test_getopt_long(void) {
 	// reset
 	optind = 1;
 
-	result = getopt_long(narg, args, optstring, NULL, NULL);
+	result = getopt_long(narg, args, optstring, &null_opts, NULL);
 	nerrors += CHECK('a' == result, "error - found %c, expected %c\n", result, 'a');
-	result = getopt_long(narg, args, optstring, NULL, NULL);
+	result = getopt_long(narg, args, optstring, &null_opts, NULL);
 	nerrors += CHECK('o' == result, "error - found %c, expected %c\n", result, 'o');
 	nerrors += CHECK(!strcmp(optarg, "arg"), "error - found optarg %s, expected %s\n", optarg, "arg");
-	result = getopt_long(narg, args, optstring, NULL, NULL);
+	result = getopt_long(narg, args, optstring, &null_opts, NULL);
 	nerrors += CHECK(-1 == result, "error - expected error, found %d\n", result);
 	nerrors += CHECK(3 == optind, "error - expected optind to point to %s but instead is at %s\n", args[3], args[optind]);
 
@@ -388,12 +392,12 @@ int test_getopt_long(void) {
 	// reset
 	optind = 1;
 
-	result = getopt_long(narg, args, optstring, NULL, NULL);
+	result = getopt_long(narg, args, optstring, &null_opts, NULL);
 	nerrors += CHECK('a' == result, "error - found %c, expected %c\n", result, 'a');
-	result = getopt_long(narg, args, optstring, NULL, NULL);
+	result = getopt_long(narg, args, optstring, &null_opts, NULL);
 	nerrors += CHECK('o' == result, "error - found %c, expected %c\n", result, 'o');
 	nerrors += CHECK(!strcmp(optarg, "arg"), "error - found optarg %s, expected %s\n", optarg, "arg");
-	result = getopt_long(narg, args, optstring, NULL, NULL);
+	result = getopt_long(narg, args, optstring, &null_opts, NULL);
 	nerrors += CHECK(-1 == result, "error - expected error, found %d\n", result);
 	nerrors += CHECK(2 == optind, "error - expected optind to point to %s but instead is at %s\n", args[2], args[optind]);
 
