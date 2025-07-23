@@ -1,10 +1,23 @@
-#include "getopt.h"
+#include "pgetopt.h"
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__MINGW32__)
 
 #include <stdbool.h>
 #include <string.h>
 #include <stdio.h>
+
+#define no_argument 0
+#define required_argument 1
+#define optional_argument 2
+
+struct getopt_long_error {
+	char * errmsg;
+	union {
+		char invalid_char;
+		char * invalid_option;
+	} bad_value;
+	int result;
+};
 
 int getopt_long(int argc, char * const * argv,
 	const char * optstring,
@@ -12,10 +25,8 @@ int getopt_long(int argc, char * const * argv,
 	static bool in_chain = false;
 	static char * nextchar = NULL;
 	static char const * errmsg = "";
-	static char invalid_char = '\0';
-	if (1 == optind) { // a reset is detected
+	if (1 == optind && !in_chain) { // a reset is detected
 		nextchar = argv[optind];
-		in_chain = false;
 	}
 	int result = -1;
 
@@ -23,39 +34,91 @@ int getopt_long(int argc, char * const * argv,
 		errmsg = "end of argv";
 		goto getopt_error_handling;
 	}
-	invalid_char = *nextchar;
+
 	if (!in_chain) { // previous call was not already an option
 		if ('-' != *nextchar) { // not an option
-			errmsg = "non-option argument detected";
-			goto getopt_error_handling;
+			return result;
 		}
 		// nextchar points to '-'
 		nextchar++;
 		if (!*nextchar) { // string "-"
-			errmsg = "\"-\" string detected";
-			goto getopt_error_handling;
+			return result;
 		}
-		invalid_char = *nextchar;
 
-		if ('-' == *(nextchar++)) { 
-			if (!*nextchar) { // "--" option termination or longopts
+		if ('-' == *nextchar) { // arg starts with "--"
+			nextchar++;
+			if (!*nextchar) { // "--" option termination
 				optind++;
-				errmsg = "\"--\" string detected. end of options";
-				goto getopt_error_handling;
-			} else if (!longopts) {
+				return result;
+			} else if (!longopts) { // long option but no longopts
 				errmsg = "long option found but no longopts provided";
 				goto getopt_error_handling;
 			} else { // handling longopts
 				int index = 0;
 				while (longopts[index].name) {
 					size_t namelen = strlen(longopts[index].name);
-					if (!strncmp(nextchar, longopts[index].name, namelen)) { // longopt matches
-						switch (*(nextchar + namelen)) {
-							case '\0': // matches without "=option-argument"
-							case '=': // --longopt=option-argument
-							default: // not actually a match
+					if (!strncmp(nextchar, longopts[index].name, namelen)) { // possibly matches
+						nextchar += namelen;
+						if (*nextchar != '\0' && !('=' == *nextchar && longopts[index].has_arg != no_argument)) {
+							// not actually a match
+							index++;
+							continue; 
 						}
+						optind++; // no matter what, optind is advancing at least 1
+						switch (longopts[index].has_arg) {
+							case no_argument: {
+								if ('\0' != *nextchar) {
+									errmsg = "option does not taken an argument";
+									goto getopt_error_handling;
+								}
+								optarg = NULL;
+								break;
+							}
+							case required_argument: {
+								if ('\0' == *nextchar) {
+									if (optind >= argc) {
+										errmsg = "missing required argument";
+										goto getopt_error_handling;
+									}
+									optarg = argv[optind++];
+								} else if ('=' == *nextchar) {
+									optarg = ++nextchar;
+								} // other case is already handled
+								break;
+							}
+							case optional_argument: {
+								// if end of arg and not followed by a potential option
+								if ('\0' == *nextchar && (optind >= argc || '-' != *(argv[optind]))) {
+									if (optind >= argc) {
+										optarg = NULL;
+									} else {
+										optarg = argv[optind++];
+									}
+								} else if ('=' == *nextchar) {
+									optarg = ++nextchar;
+								} else {
+									optarg = NULL;
+								}
+								break;
+							}
+							default: {
+								errmsg = "option has invalid has_arg parameter";
+								goto getopt_error_handling;
+							}
+						}
+						if (longopts[index].flag) {
+							*(longopts[index].flag) = longopts[index].val;
+							result = 0;
+						} else {
+							result = longopts[index].val;
+						}
+						nextchar = argv[optind];
+						if (longindex) {
+							*longindex = index;
+						}
+						return result;
 					}
+					index++;
 				}
 			}
 		}
@@ -98,16 +161,19 @@ int getopt_long(int argc, char * const * argv,
 		}
 		optchar++;
 	}
-	errmsg = "no matching option found";
+	errmsg = "unknown option";
+	in_chain = false;
+	optopt = *nextchar;
+	result = '?';
 getopt_error_handling:
 	if (opterr && ':' != *optstring) {
-		if (invalid_char) {
-			fprintf(stderr, "%s: %s - invalid charactor: %c\n", argv[0], errmsg, invalid_char);
+		if (optopt) {
+			fprintf(stderr, "%s: %s -- %c\n", argv[0], errmsg, optopt);
 		} else {
 			fprintf(stderr, "%s: %s\n", argv[0], errmsg);
 		}
 	}
-	return '?';
+	return result;
 }
 
 #else

@@ -12,6 +12,7 @@ int main(int narg, char ** args) {
 
 	int nerrors = 0;
 	nerrors += test_getopt();
+	nerrors += test_getopt_long();
 
 	return nerrors;
 }

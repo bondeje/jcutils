@@ -1,7 +1,24 @@
 #include "punistd.h"
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__MINGW32__)
 
+
+#include <stddef.h>
+#include "pgetopt.h"
+
+char * optarg = NULL;
+int opterr = 0;
+int optind = 1;
+int optopt = 0;
+
+int getopt(int argc, char * const * argv,
+	const char * optstring) {
+
+	return getopt_long(argc, argv, optstring, NULL, NULL);
+}
+
+
+/* TODO: delete
 #include <stdbool.h>
 #include <string.h>
 #include <stdio.h>
@@ -13,13 +30,13 @@ int optopt = 0;
 
 int getopt(int argc, char * const * argv,
 	const char * optstring) {
+
 	static char * nextchar = NULL;
 	static bool in_chain = false;
 	static char const * errmsg = "";
-	static char invalid_char = '\0';
-	if (1 == optind) { // a reset is detected
+	// it optind is 1 and we aren't in the first argument
+	if (1 == optind && !in_chain) {
 		nextchar = argv[optind];
-		in_chain = false;
 	}
 	int result = -1;
 
@@ -27,24 +44,18 @@ int getopt(int argc, char * const * argv,
 		errmsg = "end of argv";
 		goto getopt_error_handling;
 	}
-	invalid_char = *nextchar;
 	if (!in_chain) { // previous call was not already an option
 		if ('-' != *nextchar) { // not an option
-			errmsg = "non-option argument detected";
-			goto getopt_error_handling;
+			return result;
 		}
 		// nextchar points to '-'
 		nextchar++;
 		if (!*nextchar) { // string "-"
-			errmsg = "\"-\" string detected";
-			goto getopt_error_handling;
+			return -1;
 		}
-		invalid_char = *nextchar;
-
 		if ('-' == *nextchar) { // "--" option termination
 			optind++;
-			errmsg = "\"--\" string detected. end of options";
-			goto getopt_error_handling;
+			return result;
 		}
 		in_chain = true;
 	}
@@ -85,17 +96,20 @@ int getopt(int argc, char * const * argv,
 		}
 		optchar++;
 	}
-	errmsg = "no matching option found";
+	errmsg = "unknown option";
+	in_chain = false;
+	optopt = *nextchar;
+	result = '?';
 getopt_error_handling:
 	if (opterr && ':' != *optstring) {
-		if (invalid_char) {
-			fprintf(stderr, "%s: %s - invalid charactor: %c\n", argv[0], errmsg, invalid_char);
+		if (optopt) {
+			fprintf(stderr, "%s: %s -- %c\n", argv[0], errmsg, optopt);
 		} else {
 			fprintf(stderr, "%s: %s\n", argv[0], errmsg);
 		}
 	}
-	return '?';
-}
+	return result;
+}*/
 
 #else
 
