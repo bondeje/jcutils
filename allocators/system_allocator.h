@@ -1,7 +1,6 @@
 #ifndef SYSTEM_ALLOCATOR_H
 #define SYSTEM_ALLOCATOR_H
 
-#include <stdlib.h>
 #include "allocator.h"
 
 struct SystemAllocator {
