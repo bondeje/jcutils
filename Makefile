@@ -13,8 +13,8 @@ fft_:
 page_buffer_:
 	(cd page_buffer ; make clean check install $(FLAGS))
 
-strings_:
-	(cd strings ; make clean check install $(FLAGS))
+strings:
+	(cd Strings ; make clean check install $(FLAGS))
 
 memory_pool_:
 	(cd memory_pool ; make clean check install speed $(FLAGS))
@@ -25,6 +25,6 @@ allocators_:
 clean:
 	rm -f *.o *.h *.so
 	(cd page_buffer ; make clean)
-	(cd strings ; make clean)
+	(cd Strings ; make clean)
 	(cd memory_pool ; make clean)
 	(cd fft ; make clean)
