@@ -4,6 +4,7 @@ STDC = -std=c99
 CFLAGS_COM = -Wall -Wextra -Werror -pedantic $(STDC) $(CFLAGS)
 CFLAGS_DBG = $(CFLAGS_COM) -g2 -O0
 CFLAGS_ = $(CFLAGS_COM) -O2
+PREFIX = /usr/local/jcutils/Strings
 
 OBJS = strings.o
 HDRS = strings.h
@@ -22,7 +23,10 @@ check: test
 	./test --verbose
 
 install: all
-	if [ -n "$(PREFIX)" ] ; then cp $(OBJS) $(HDRS) $(PREFIX) ; fi
+	if [ -n "$(PREFIX)" ] ; then \
+		install $(HDRS) $(PREFIX)/include ; \
+		install $(OBJS) $(PREFIX)/lib ; \
+	fi
 
 clean:
 	rm -f test $(OBJS)

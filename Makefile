@@ -1,30 +1,27 @@
 .POSIX:
-CC = gcc
-
-FLAGS = CC=$(CC) SANITIZE=$(SANITIZE) PREFIX=$(PREFIX)
 
 all: page_buffer_ strings_ memory_pool_ fft_ allocators_
 
 .MAIN: all
 
 fft_:
-	(cd fft ; make clean check install $(FLAGS))
+	make -C fft clean check install
 
 page_buffer_:
-	(cd page_buffer ; make clean check install $(FLAGS))
+	make -C page_buffer clean check install
 
 strings:
-	(cd Strings ; make clean check install $(FLAGS))
+	make -C Strings clean check install
 
 memory_pool_:
-	(cd memory_pool ; make clean check install speed $(FLAGS))
+	make -C memory_pool clean check install speed
 
 allocators_:
-	(cd allocators ; make clean check install $(FLAGS))
+	make -C allocators clean check install
 
 clean:
 	rm -f *.o *.h *.so
-	(cd page_buffer ; make clean)
-	(cd Strings ; make clean)
-	(cd memory_pool ; make clean)
-	(cd fft ; make clean)
+	make -C page_buffer clean
+	make -C Strings clean
+	make -C memory_pool clean
+	make -C fft clean

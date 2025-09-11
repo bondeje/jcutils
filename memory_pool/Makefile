@@ -4,7 +4,7 @@ CFLAGS_COM = -Wall -Wextra -Werror -pedantic $(CFLAGS)
 CFLAGS_DBG = $(CFLAGS_COM) -std=c11 -g2 -O0
 CFLAGS_ = $(CFLAGS_COM) -std=c99 -O2
 IFLAGS = -I..
-
+PREFIX = /usr/local/jcutils/memory_pool
 OBJS = mempool.o
 HDRS = mempool.h
 
@@ -26,7 +26,10 @@ check: test
 	./test --verbose
 
 install: all
-	if [ -n "$(PREFIX)" ] ; then cp $(OBJS) $(HDRS) $(PREFIX) ; fi
+	if [ -n "$(PREFIX)" ] ; then \
+		install $(HDRS) $(PREFIX)/include ; \
+		install $(OBJS) $(PREFIX)/lib ; \
+	fi
 
 clean:
 	rm -f test testspeed $(OBJS)

@@ -5,6 +5,7 @@ CFLAGS_DBG = $(CFLAGS_COM) -g3 -O0
 IFLAGS = -I..
 CFLAGS_ = $(CFLAGS_COM) -O2
 LFLAGS = -lm
+PREFIX = /usr/local/jcutils/fft
 
 OBJS = fft.o
 HDRS = fft.h
@@ -32,7 +33,10 @@ check: test
 	./test --verbose
 
 install: all
-	if [ -n "$(PREFIX)" ] ; then cp $(OBJS) $(HDRS) $(PREFIX) ; fi
+	if [ -n "$(PREFIX)" ] ; then \
+		install $(HDRS) $(PREFIX)/include ; \
+		install $(OBJS) $(PREFIX)/lib ; \
+	fi
 
 clean:
 	rm -f test grind *.out *.annotate posix_time $(OBJS)
