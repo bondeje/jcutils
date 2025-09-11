@@ -3,6 +3,8 @@
 
 // WARNING: except where otherwise noted, all pointers passed should be non-null
 
+#include <stddef.h>
+
 typedef struct String {
 	char * str;
 	ptrdiff_t size;
@@ -14,6 +16,8 @@ extern String const WHITESPACE;
 #define String_size(str) String_len(str)
 static inline ptrdiff_t String_len(String const * str) { return str->size; }
 static inline size_t String_capacity(String const * str) { return str->capacity; }
+
+size_t String_hash(String a, size_t bin_size);
 
 _Bool String_is_empty(String const * str);
 void String_clear(String * str);

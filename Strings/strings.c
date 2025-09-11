@@ -630,3 +630,17 @@ int String_slice(String * restrict dest, String const * restrict str, ptrdiff_t 
 	}
 	return 0;
 }
+
+size_t String_hash(String a, size_t bin_size) {
+	unsigned long long hash = 5381;
+	ptrdiff_t i = 0;
+	unsigned char * str = (unsigned char *) a.str;
+
+	while (i < a.size) {
+		hash = ((hash << 5) + hash) + *str; /* hash * 33 + c */
+		str++;
+		i++;
+	}
+	return hash % bin_size;
+}
+

@@ -6,6 +6,9 @@ OSB/
 stack_orig.h
 slab_allocator.h
 main
+include/
+lib/
+bin/
 
 # Prerequisites
 *.d
