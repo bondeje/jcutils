@@ -574,10 +574,9 @@ ptrdiff_t String_split(ptrdiff_t nsplit, String * restrict dest, String * restri
 	}
 	return j;
 }
-int String_join(String * restrict dest, String const * restrict sep, ptrdiff_t n, 
-	String const * const restrict strings) {
+int String_join(String * restrict dest, String const * restrict sep, Array_String * strings) {
 
-	if (!n) {
+	if (!strings->size) {
 		return -1;
 	}
 
@@ -586,18 +585,18 @@ int String_join(String * restrict dest, String const * restrict sep, ptrdiff_t n
 	}
 	
 	ptrdiff_t sep_size = String_len(sep);
-	ptrdiff_t min_size = (n - 1) * sep_size;
-	for (ptrdiff_t i = 0; i < n; i++) {
-		min_size += String_len(strings + i);
+	ptrdiff_t min_size = (strings->size - 1) * sep_size;
+	for (ptrdiff_t i = 0; i < strings->size; i++) {
+		min_size += String_len(strings->strings + i);
 	}
 	if (!String_resize(dest, min_size)) {
 		return -1;
 	}
 	String_clear(dest);
-	String_extend(dest, strings + 0);
-	for (ptrdiff_t j = 1; j < n; j++) {
+	String_extend(dest, strings->strings + 0);
+	for (ptrdiff_t j = 1; j < strings->size; j++) {
 		String_extend(dest, sep);
-		String_extend(dest, strings + j);
+		String_extend(dest, strings->strings + j);
 	}
 	return 0;
 }

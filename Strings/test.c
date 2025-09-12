@@ -914,10 +914,11 @@ int test_String_join(void) {
 		{.str = "file", .size = 4}
 	};
 	int ninputs = sizeof(inputs) / sizeof(inputs[0]);
+	Array_String inputs_array = {.strings = inputs, .size = ninputs};
 	String sep = {.str = "/", .size = 1};
 	
 	String test = {0};
-	int status = String_join(&test, &sep, ninputs, inputs);
+	int status = String_join(&test, &sep, &inputs_array);
 
 	nerrors += CHECK(-1 != status, "join failed\n");
 	if (nerrors) {

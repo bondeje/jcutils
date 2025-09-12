@@ -11,6 +11,13 @@ typedef struct String {
 	size_t capacity; // 0 means not allocated or reallocatable. number of elements allocated
 } String;
 
+
+// TODO: not a full implementation of Array(String)
+typedef struct Array_String {
+	String * strings;
+	ptrdiff_t size;
+} Array_String;
+
 extern String const WHITESPACE;
 extern String const NEWLINE;
 extern String const PATH_SEPARATOR;
@@ -70,8 +77,7 @@ int String_replace(String * str, String const * restrict old, String const * res
 char * String_cstr(String * str);
 // separate on whitespace if sep is NULL
 ptrdiff_t String_split(ptrdiff_t nsplit, String * restrict dest, String * restrict str, String * restrict sep);
-int String_join(String * restrict dest, String const * restrict sep, ptrdiff_t n, 
-	String const * const restrict strings);
+int String_join(String * restrict dest, String const * restrict sep, Array_String * strings);
 // step == 0 is used as step == 1, if step > 0 and end == 0, String_len is used as end
 int String_slice(String * restrict dest, String const * restrict str, ptrdiff_t start, ptrdiff_t end, ptrdiff_t step);
 
