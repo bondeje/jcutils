@@ -12,6 +12,8 @@ typedef struct String {
 } String;
 
 extern String const WHITESPACE;
+extern String const NEWLINE;
+extern String const PATH_SEPARATOR;
 
 #define String_size(str) String_len(str)
 static inline ptrdiff_t String_len(String const * str) { return str->size; }

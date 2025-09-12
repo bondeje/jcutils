@@ -23,6 +23,9 @@ memory_pool_: paths
 allocators_: paths
 	make -C allocators clean check install PREFIX=$(PREFIX)
 
+PIE: paths
+	make -C pie clean install PREFIX=$(PREFIX)
+
 clean:
 	rm -f *.o *.h *.so
 	rm -rf include lib bin
@@ -30,3 +33,4 @@ clean:
 	make -C Strings clean
 	make -C memory_pool clean
 	make -C fft clean
+	make -C pie clean

@@ -6,6 +6,8 @@ SO=so
 OBJ=o
 EXE=
 
+PREFIX=/usr/local/jcutils/pie
+
 OBJS=punistd.$(OBJ) pgetopt.$(OBJ)
 
 all: libpie.$(SO)
@@ -27,6 +29,11 @@ cflags:
 
 check: all
 	make -C test check
+
+# this is incomplete
+install: all
+	install pgetopt.o $(PREFIX)/lib
+	install pgetopt.h $(PREFIX)/include
 
 clean:
 	rm -rf *.$(SO)

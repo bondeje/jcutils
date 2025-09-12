@@ -21,6 +21,25 @@ String const EMPTY_STRING = {
 	.size = 0
 };
 
+String const NEWLINE = {
+#ifdef _WIN32
+	.str = "\r\n",
+	.size = 2
+#else
+	.str = "\n",
+	.size = 1
+#endif
+};
+
+String const PATH_SEPARATOR = {
+#ifdef _WIN32
+	.str = "\\",
+#else
+	.str = "/",
+#endif		
+	.size = 1
+};
+
 #define UPPER_TO_LOWER_OFFSET 32
 
 _Bool String_is_empty(String const * str) {
