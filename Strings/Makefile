@@ -2,7 +2,7 @@
 CC = gcc
 STDC = -std=c99
 CFLAGS_COM = -Wall -Wextra -Werror -pedantic $(STDC) $(CFLAGS)
-CFLAGS_DBG = $(CFLAGS_COM) -g3 -O0
+CFLAGS_DBG = $(CFLAGS_COM) -g3 -O0 -fsanitize=address,undefined
 CFLAGS_ = $(CFLAGS_COM) -O2
 PREFIX = /usr/local/jcutils/Strings
 

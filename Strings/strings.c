@@ -413,12 +413,10 @@ ptrdiff_t String_rpartition(String * str, String const * sep, String * suffix) {
 	char * str_current = str->str + str->size - sep->size + 1;
 	
 	while (str_current > str->str) {
-		while (str_current-- > str->str) {
-			if (*str_current == first_sep) {
-				break;
-			}
+		while (str_current > str->str && (*(--str_current) != first_sep)) {
+			
 		}
-		if (*str_current == first_sep && !strncmp(str_current, sep->str, sep->size)) {
+		if (!strncmp(str_current, sep->str, sep->size)) {
 			break;
 		}
 	}
