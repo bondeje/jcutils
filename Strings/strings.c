@@ -637,6 +637,7 @@ String * String_new(char const * buf, ptrdiff_t size) {
 	} else {
 		if (size) { // size is the capacity
 			capacity = size;
+			size = 0;
 		} else { // create just an allocatable String with no initial contents
 			capacity = 0;
 		}
