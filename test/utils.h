@@ -14,7 +14,7 @@
 #define TEST_START(verbosity) (verbosity ? printf("%s...", __func__) : 0)
 #define TEST_END(verbosity, nerrors) (verbosity ? (nerrors ? printf("failed with %d errors\n", nerrors) : printf("passed\n")) : 0)
 
-#define CHECK_VA_ARGS(result, failmsg, ...) (result ? 0 : (printf("\n\t%s-%s-%d: " failmsg "\n", __FILE__, __func__, __LINE__, __VA_ARGS__), 1))
+#define CHECK_VA_ARGS(result, failmsg, ...) (result ? 0 : ((void)printf("\n\t%s-%s-%d: " failmsg "\n", __FILE__, __func__, __LINE__, __VA_ARGS__), 1))
 #define CHECK_2(result, failmsg) (result ? 0 : (printf("\n\t%s-%s-%d: " failmsg "\n", __FILE__, __func__, __LINE__), 1))
 #define CHECK_1(result) CHECK_2(result, "")
 

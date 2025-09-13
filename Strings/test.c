@@ -71,7 +71,7 @@ int test_setup(void) {
 			static_strings[i].str, (long long)static_strings[i].size, 
 			(long long)dynamic_strings[i].size);
 		if (static_strings[i].size) {
-			nerrors += CHECK(dynamic_strings[i].capacity >= (size_t)static_strings[i].size,
+			nerrors += CHECK(dynamic_strings[i].capacity >= static_strings[i].size,
 				"failed to allocate sufficient space for string %s. expected >=%lld, found %zu\n",
 				static_strings[i].str, (long long)static_strings[i].size, 
 				dynamic_strings[i].capacity);
@@ -219,7 +219,7 @@ int test_String_get(void) {
 				(long long)j, (int)size, dynamic_strings[i].str,
 				str_[j + size], String_get(dynamic_strings + i, j));
 		}
-		nerrors += CHECK('\0' == String_get(dynamic_strings + i, size),
+		nerrors += CHECK(-1 == String_get(dynamic_strings + i, size),
 			"failed to retrieve correct character at index %lld for %.*s. expected (null), found %c\n",
 			(long long)size, (int)size, dynamic_strings[i].str,
 			String_get(dynamic_strings + i, size));
@@ -260,7 +260,7 @@ int test_String_set(void) {
 			String_dest(&test);
 		}
 		String_copy(&test, dynamic_strings + i);
-		nerrors += CHECK('\0' == String_set(&test, size, testc),
+		nerrors += CHECK(-1 == String_set(&test, size, testc),
 			"failed to retrieve correct character at index %lld for %.*s. expected (null), found %c\n",
 			(long long)size, (int)size, dynamic_strings[i].str,
 			String_get(dynamic_strings + i, size));
@@ -655,13 +655,13 @@ int test_String_count(void) {
 int test_String_lstrip(void) {
 	TEST_START(verbose);
 	int nerrors = 0;
-	char const * str_orig = " \t\f\n\r\vHello, World \t\f\n\r\v";
-	char const * str_result = "Hello, World \t\f\n\r\v";
-	String test;
-	String_init(&test, str_orig, strlen(str_orig), 0);
+	char str_orig[] = " \t\f\n\r\vHello, World \t\f\n\r\v";
+	char str_result[] = "Hello, World \t\f\n\r\v";
+	String test = AUTO_STRING(&str_orig[0], strlen(str_orig));
+	String result = AUTO_STRING(&str_result[0], strlen(str_result));
 	String_lstrip(&test, NULL);
 
-	nerrors += CHECK(!String_compare(&test, &(String){.str = (char *)str_result, .size = strlen(str_result)}),
+	nerrors += CHECK(!String_compare(&test, &result),
 		"failed to strip from left and right. expected %s, found %.*s\n",
 		str_result, (int)test.size, test.str);
 
@@ -673,13 +673,13 @@ int test_String_lstrip(void) {
 int test_String_rstrip(void) {
 	TEST_START(verbose);
 	int nerrors = 0;
-	char const * str_orig = " \t\f\n\r\vHello, World \t\f\n\r\v";
-	char const * str_result = " \t\f\n\r\vHello, World";
-	String test;
-	String_init(&test, str_orig, strlen(str_orig), 0);
+	char str_orig[] = " \t\f\n\r\vHello, World \t\f\n\r\v";
+	char str_result[] = " \t\f\n\r\vHello, World";
+	String test = AUTO_STRING(&str_orig[0], strlen(str_orig));
+	String result = AUTO_STRING(&str_result[0], strlen(str_result));
 	String_rstrip(&test, NULL);
 
-	nerrors += CHECK(!String_compare(&test, &(String){.str = (char *)str_result, .size = strlen(str_result)}),
+	nerrors += CHECK(!String_compare(&test, &result),
 		"failed to strip from left and right. expected %s, found %.*s\n",
 		str_result, (int)test.size, test.str);
 
@@ -691,13 +691,13 @@ int test_String_rstrip(void) {
 int test_String_strip(void) {
 	TEST_START(verbose);
 	int nerrors = 0;
-	char const * str_orig = " \t\f\n\r\vHello, World \t\f\n\r\v";
-	char const * str_result = "Hello, World";
-	String test;
-	String_init(&test, str_orig, strlen(str_orig), 0);
+	char str_orig[] = " \t\f\n\r\vHello, World \t\f\n\r\v";
+	char str_result[] = "Hello, World";
+	String test = AUTO_STRING(&str_orig[0], strlen(str_orig));
+	String result = AUTO_STRING(&str_result[0], strlen(str_result));
 	String_strip(&test, NULL);
 	
-	nerrors += CHECK(!String_compare(&test, &(String){.str = (char *)str_result, .size = strlen(str_result)}),
+	nerrors += CHECK(!String_compare(&test, &result),
 		"failed to strip from left and right. expected %s, found %.*s\n",
 		str_result, (int)test.size, test.str);
 
@@ -710,12 +710,12 @@ int test_String_rpartition(void) {
 	TEST_START(verbose);
 	int nerrors = 0;
 
-	char const * path_raw = "path/to/file";
-	String const file_result = {.str = "file", .size = 4};
-	String const path_result = {.str = "path/to", .size = 7};
-	String path = {.str = (char *)path_raw, .size = strlen(path_raw)};
-	String file;
-	String sep = {.str = "/", .size = 1};
+	char path_raw[] = "path/to/file";
+	String const file_result = CONST_STRING("file", 4);
+	String const path_result = CONST_STRING("path/to", 7);
+	String path = AUTO_STRING(&path_raw[0], strlen(path_raw));
+	String file = RESIZABLE_STRING();
+	String sep = CONST_STRING("/", 1);
 	String_rpartition(&path, &sep, &file);
 
 	nerrors += CHECK(!String_compare(&path, &path_result),
@@ -735,21 +735,21 @@ int test_String_rpartition(void) {
 int test_String_partition(void) {
 	TEST_START(verbose);
 	int nerrors = 0;
-
-	char const * path_raw = "path/to/file";
-	String const file_result = {.str = "to/file", .size = 7};
-	String const path_result = {.str = "path", .size = 4};
-	String path = {.str = (char *)path_raw, .size = strlen(path_raw)};
-	String file;
-	String sep = {.str = "/", .size = 1};
+	
+	char path_raw[] = "path/to/file";
+	String const file_result = CONST_STRING("to/file", 7);
+	String const path_result = CONST_STRING("path", 4);
+	String path = AUTO_STRING(&path_raw[0], strlen(path_raw));
+	String file = RESIZABLE_STRING();
+	String sep = CONST_STRING("/", 1);
 	String_partition(&path, &sep, &file);
 
 	nerrors += CHECK(!String_compare(&path, &path_result),
-		"failed to retrieve prefix in rpartition. expected %.*s, found %.*s\n",
+		"failed to retrieve prefix in partition. expected %.*s, found %.*s\n",
 		(int)path_result.size, path_result.str,
 		(int)path.size, path.str);
 	nerrors += CHECK(!String_compare(&file, &file_result),
-		"failed to retrieve suffix in rpartition. expected %.*s, found %.*s\n",
+		"failed to retrieve suffix in partition. expected %.*s, found %.*s\n",
 		(int)file_result.size, file_result.str,
 		(int)file.size, file.str);
 
@@ -762,22 +762,16 @@ int test_String_expand_tabs(void) {
 	TEST_START(verbose);
 	int nerrors = 0;
 
-	char const * craw = "\tindented\n\titems";
-	char const * cresult = "    indented\n    items";
-	String const tab = {.str = "\t", .size = 1};
-	String const raw = {.str = (char *)craw, .size = strlen(craw)};
-	String result;
-	String_init(&result, craw, strlen(craw), 0);
-	int ntabs_result = String_count(&raw, &tab, 0, 0);
-	int ntabs = String_expand_tabs(&result, 4);
+	char str_orig[60] = "\tindented\n\titems";
+	char str_result[] = "    indented\n    items";
+	String test = {.str = &str_orig[0], .size = strlen(str_orig), .capacity = -60};
+	String result = AUTO_STRING(&str_result[0], strlen(str_result));
+	// assumes String_count is working at this point
+	nerrors += CHECK(!String_expand_tabs(&test, 4), "failed to expand tabs\n");
 
-	nerrors += CHECK(ntabs == ntabs_result,
-		"failed to find all the tabs in %s. expected %d, found %d\n",
-		craw, ntabs_result, ntabs);
-
-	nerrors += CHECK(!String_compare(&result, &(String){.str = (char *)cresult, .size = strlen(cresult)}),
+	nerrors += CHECK(!String_compare(&test, &result),
 		"failed to expand tabs properly 1 tab = %d spaces. expected %s, found %.*s\n",
-		4, cresult, (int)result.size, result.str);
+		4, str_result, (int)test.size, test.str);
 
 	String_dest(&result);
 	TEST_END(verbose, nerrors);
@@ -787,16 +781,16 @@ int test_String_expand_tabs(void) {
 int test_String_append(void) {
 	TEST_START(verbose);
 	int nerrors = 0;
-	char const * hw = "Hello, World";
-	String test;
-	String_init(&test, hw, 1, 0); // initialize with first element
-	for (size_t i = 1; i < strlen(hw); i++) {
-		nerrors += -1 * String_append(&test, hw[i]);
+	char str_orig[] = "Hello, World";
+	String test = RESIZABLE_STRING();
+	String result = AUTO_STRING(&str_orig[0], strlen(str_orig));
+	for (size_t i = 0; i < strlen(str_orig); i++) {
+		nerrors += -1 * String_append(&test, str_orig[i]);
 	}
 
-	nerrors += CHECK(!String_compare(&test, &(String){.str = (char *)hw, .size = strlen(hw)}),
+	nerrors += CHECK(!String_compare(&test, &result),
 		"failed to append to string. expected %s, found %.*s\n",
-		hw, (int)test.size, test.str);
+		str_orig, (int)test.size, test.str);
 
 	String_dest(&test);
 
@@ -808,20 +802,20 @@ int test_String_extend(void) {
 	TEST_START(verbose);
 	int nerrors = 0;
 
-	char const * h = "Hello,";
-	char const * w = " World";
-	char const * hw = "Hello, World";
-	String a;
-	String_init(&a, h, strlen(h), 0);
-	String b = {.str = (char *)w, .size = strlen(w)};
+	char str_h[20] = "Hello,";
+	char str_w[] = " World";
+	char str_hw[] = "Hello, World";
+	String h = {.str = &str_h[0], strlen(str_h), sizeof(str_h)};
+	String w = AUTO_STRING(&str_w[0], strlen(str_w));
+	String hw = AUTO_STRING(&str_hw[0], strlen(str_hw));
 
-	nerrors += -1 * String_extend(&a, &b);
+	nerrors += String_extend(&h, &w) ? 1 : 0;
 
-	nerrors += CHECK(!String_compare(&a, &(String){.str = (char *)hw, .size = strlen(hw)}),
+	nerrors += CHECK(!String_compare(&h, &hw),
 		"failed to extend %s to %s. expected %s, found %.*s\n",
-		h, w, hw, (int)a.size, a.str);
+		"Hello,", " World", "Hello, World", (int)h.size, h.str);
 
-	String_dest(&a);
+	// destroys should be unnecessary
 	TEST_END(verbose, nerrors);
 	return nerrors;
 }
@@ -830,35 +824,34 @@ int test_String_replace(void) {
 	TEST_START(verbose);
 	int nerrors = 0;
 
-	char const * path_raw = "path/to/file";
-	char const * path_result = "path\\to\\file";
-	char const * path_result1 = "path\\to/file";
-	String result = {.str = (char *)path_result, .size = strlen(path_result)};
-	String result1 = {.str = (char *)path_result1, .size = strlen(path_result1)};
-	String sep = {.str = "/", .size = 1};
-	String rep = {.str = "\\", .size = 1};
-	String test = {0};
-	String_init(&test, path_raw, strlen(path_raw), strlen(path_raw));
-	
-	int nreplaced = String_replace(&test, &sep, &rep, 0);
-	nerrors += CHECK(2 == nreplaced,
-		"failed to replace all %c with %c. expected %d, found %d\n",
-		'/', '\\', 2, nreplaced);
+	char str_orig[] = "path/to/file";
+	char str_result[] = "path\\to\\file";
+	char str_result1[] = "path\\to/file";
+	String const orig = CONST_STRING(&str_orig[0], strlen(str_orig));
+	String result = AUTO_STRING(&str_result[0], strlen(str_result));
+	String result1 = AUTO_STRING(&str_result1[0], strlen(str_result1));
+	String sep = CONST_STRING("/", 1);
+	String rep = CONST_STRING("\\", 1);
+	String test = RESIZABLE_STRING();
+	String_copy(&test, &orig);
+
+	nerrors += CHECK(!String_replace(&test, &sep, &rep, -1),
+		"failed to replace all %c with %c\n",
+		'/', '\\');
 
 	nerrors += CHECK(!String_compare(&test, &result),
 		"failed to replace all %c with %c. expected %s, found %.*s\n",
-		'/', '\\', path_result, (int)test.size, test.str);
+		'/', '\\', str_result, (int)test.size, test.str);
 
-	String_init(&test, path_raw, strlen(path_raw), test.capacity);
+	String_copy(&test, &orig);
 
-	nreplaced = String_replace(&test, &sep, &rep, 1);
-	nerrors += CHECK(1 == nreplaced,
-		"failed to replace all %c with %c. expected %d, found %d\n",
-		'/', '\\', 1, nreplaced);
+	nerrors += CHECK(!String_replace(&test, &sep, &rep, 1),
+		"failed to replace all %c with %c\n",
+		'/', '\\');
 
 	nerrors += CHECK(!String_compare(&test, &result1),
 		"failed to replace all %c with %c. expected %s, found %.*s\n",
-		'/', '\\', path_result1, (int)test.size, test.str);
+		'/', '\\', str_result1, (int)test.size, test.str);
 
 	String_dest(&test);
 	TEST_END(verbose, nerrors);
@@ -869,19 +862,19 @@ int test_String_split(void) {
 	TEST_START(verbose);
 	int nerrors = 0;
 
-	char const * path_raw = "path/to/file";
-	String results[] = {
-		{.str = "path", .size = 4},
-		{.str = "to", .size = 2},
-		{.str = "file", .size = 4}
+	char path_raw[] = "path/to/file";
+	const String results[] = {
+		CONST_STRING("path", 4),
+		CONST_STRING("to", 2),
+		CONST_STRING("file", 4)
 	};
 	int nresults = sizeof(results) / sizeof(results[0]);
-	String sep = {.str = "/", .size = 1};
-	String input = {.str = (char *)path_raw, .size = strlen(path_raw)};
+	String sep = CONST_STRING("/", 1);
+	String input = AUTO_STRING(&path_raw[0], strlen(path_raw));
 
 	ptrdiff_t ntest = 3;
-	String test[3] = {0};
-	ptrdiff_t count = String_split(ntest, &test[0], &input, &sep);
+	String test[3] = {0}; // 3 RESIZABLE Strings
+	ptrdiff_t count = String_split(&(Array_String){.strings = test, .size = ntest}, &input, &sep);
 
 	nerrors += CHECK(3 == count, "split failed\n");
 	if (nerrors) {
@@ -907,7 +900,7 @@ int test_String_join(void) {
 	TEST_START(verbose);
 	int nerrors = 0;
 
-	char const * path_raw = "path/to/file";
+	char path_raw[] = "path/to/file";
 	String inputs[] = {
 		{.str = "path", .size = 4},
 		{.str = "to", .size = 2},
@@ -915,17 +908,17 @@ int test_String_join(void) {
 	};
 	int ninputs = sizeof(inputs) / sizeof(inputs[0]);
 	Array_String inputs_array = {.strings = inputs, .size = ninputs};
-	String sep = {.str = "/", .size = 1};
+	String sep = CONST_STRING("/", 1);
 	
-	String test = {0};
-	int status = String_join(&test, &sep, &inputs_array);
+	String test = RESIZABLE_STRING();
+	String result = AUTO_STRING(&path_raw[0], strlen(path_raw));
 
-	nerrors += CHECK(-1 != status, "join failed\n");
+	nerrors += CHECK(!String_join(&test, &sep, &inputs_array), "join failed\n");
 	if (nerrors) {
 		return nerrors;
 	}
 	
-	nerrors += CHECK(!String_compare(&test, &(String){.str = (char *)path_raw, strlen(path_raw)}),
+	nerrors += CHECK(!String_compare(&test, &result),
 		"failed to join strings. expected %s, found %.*s\n",
 		path_raw, (int)test.size, test.str);
 
@@ -938,17 +931,10 @@ int test_String_slice(void) {
 	TEST_START(verbose);
 	int nerrors = 0;
 
-	String test = {0};
+	String test = RESIZABLE_STRING();
+	String const src = CONST_STRING("I am the very model of a modern major general", 45);
 
-	String src = {
-		.str = "I am the very model of a modern major general",
-		.size = 45
-	};
-
-	String sl002 = {
-		.str = "Ia h eymdlo  oenmjrgnrl",
-		.size = 23
-	};
+	String sl002 = CONST_STRING("Ia h eymdlo  oenmjrgnrl", 23);
 	nerrors += -1 * String_slice(&test, &src, 0, 0, 2);
 	nerrors += CHECK(!String_compare(&test, &sl002),
 		"failed to slice '%.*s'[%d:%d:%d]. expected '%.*s', found '%.*s'\n",
