@@ -734,9 +734,6 @@ ptrdiff_t String_join(String * dest, String const * sep, Array_String * strings)
 	return 0;
 }
 char * String_cstr(String * str) {
-	if (!String_is_mutable(str)) {
-		return NULL;
-	}
 	if (String_append(str, '\0')) {
 		return NULL;
 	}

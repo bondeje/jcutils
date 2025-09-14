@@ -28,6 +28,7 @@
 
 #define AUTO_STRING_1(string) (String){.str = string, .size = strlen(string), .capacity = -strlen(string)}
 #define AUTO_STRING_2(string, len) (String){.str = string, .size = len, .capacity = (assert(len <= PTRDIFF_MAX), -(len))}
+#define AUTO_STRING_3(string, len, cap) (String){.str = string, .size = len, .capacity = (assert(cap <= PTRDIFF_MAX), -(cap))}
 #define AUTO_STRING(...) APPEND_NARGS(AUTO_STRING_, __VA_ARGS__)(__VA_ARGS__)
 
 #define RESIZABLE_STRING() (String){.str = NULL, .size = 0, .capacity = 0}
